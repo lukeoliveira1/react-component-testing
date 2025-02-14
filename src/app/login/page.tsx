@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
 
 type Username = {
   name: string;
@@ -13,6 +13,20 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [user, setUser] = useState<Username>({ name: "" });
 
+  const handleClick: MouseEventHandler = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await fetch(
+        "https://jsonplaceholder.typicode.com/users/1"
+      );
+      const userData = await response.json();
+      setUser(userData);
+    } catch {
+      setError(true);
+    }
+    setLoading(false);
+  };
   return (
     <div className="h-screen flex flex-col w-full items-center justify-center">
       <span className="font-bold">{user.name}</span>
@@ -34,6 +48,7 @@ export default function Login() {
         <button
           className="bg-amber-500 w-[100%] py-2 rounded-md text-gray-50 font-bold hover:cursor-pointer hover:bg-amber-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
           disabled={!username || !password}
+          onClick={handleClick}
         >
           {loading ? "please wait" : "Login"}
         </button>
